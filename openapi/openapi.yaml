@@ -1,0 +1,1731 @@
+openapi: 3.0.0
+servers:
+  - url: //petstore.swagger.io/v2
+    description: Default server
+  - url: //petstore.swagger.io/sandbox
+    description: Sandbox server
+info:
+  description: |
+    Welcome to the Kubectyl v1 API documentation. This documentation is provided by 
+    [ReDoc](https://redocly.com) with the help of [Pterodactyl](https://dashflo.net/docs/api/pterodactyl/v1) documentation.
+    
+    If you find any errors throughout this API reference, please [let us know](mailto:contact@kubectyl.org). A special thanks to everyone who has helped contribute!
+    
+    Links: [Website](https://kubectyl.org) | [Github](https://github.com/kubectyl) | [Discord](https://dsc.gg/kubectyl)
+
+    # Authentication
+
+    A user can generate an client API key from: [/account/api](https://kubectyl.app/account/api).
+    An admin can generate an application API key from: [/admin/api](https://kubectyl.app/admin/api)
+    
+    API keys are entered as bearer tokens with all API requests. Here is an example CURL request:
+    
+    ```
+    curl "<endpoint>"
+      -H "Authorization: Bearer <API-Key>"
+      -H "Content-Type: application/json"
+      -H "Accept: Application/vnd.kubectyl.v1+json"
+    ```
+    
+    # Ratelimits
+    
+    240 requests can be made each minute. Headers are returned to show thelimit, and how many are used within minute.
+    
+    ```
+    x-ratelimit-limit: 240
+    x-ratelimit-remaining: 237
+    ```
+    
+    # Docs Guide
+    
+    Some API routes require data input, or have additional information that can be provided. The route will include table(s) with the available parameters.
+    
+    | Name      | Description  |
+    | ---------------- | ------------ |
+    | Include parameters              | List of parameters that can be used after adding **?include=<parameters>,<more-parameters>** to the route      |
+    | Available parameters              | List of all the different parameters available such as **?example=something&example2=something**  |
+    | Filters              | Filter the data to only include certain information **?filter[uuid]=something** |
+    | Sort by              | Sort the returned results **?sort=-id**. Add a - before the sort type to reverse the order |
+    | Fields              | Data input fields |
+
+    <SecurityDefinitions />
+
+  version: 1.0.0
+  title: Kubectyl v1 API Reference
+  #termsOfService: 'http://swagger.io/terms/'
+  #contact:
+  #  name: Info
+  #  email: contact@kubectyl.org
+  #  url: https://github.com/kubectyl
+  x-logo:
+    url: 'https://cdn.kubectyl.org/black-01.png'
+    altText: Kubectyl
+  #license:
+  #  name: MIT License
+  #  url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+#externalDocs:
+#  description: Find out how to create Github repo for your OpenAPI spec.
+#  url: 'https://github.com/Rebilly/generator-openapi-repo'
+tags:
+  - name: /api/client
+    description: Everything about clients
+  - name: /api/client/account
+    description: Information about accounts
+  - name: /api/client/servers/{server}
+    description: Information about servers
+  - name: /api/client/servers/{server}/databases
+    description: Information about databases
+  - name: /api/client/servers/{server}/files
+    description: Information about files
+  - name: /api/client/servers/{server}/schedules
+    description: Information about schedules
+x-tagGroups:
+  - name: Client
+    tags:
+      - /api/client
+      - /api/client/account
+      - /api/client/servers/{server}
+      - /api/client/servers/{server}/databases
+      - /api/client/servers/{server}/files
+      - /api/client/servers/{server}/schedules
+      - store
+  - name: Applications
+    tags:
+      - user
+paths:
+  /api/client/servers/{server}/schedules/{schedule}/tasks/{task}:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    delete:
+      tags:
+        - /api/client/servers/{server}/schedules
+      summary: Delete task
+      description: Deletes the specified task
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schedule
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: task
+          in: path
+          required: true
+          schema:
+            type: string
+      x-codeSamples:
+        - lang: 'cURL'
+          label: CLI
+          source: |
+            curl "https://kubectyl.file.properties/api/client/servers/1a7ce997/schedules/2/tasks/3" \
+              -H 'Accept: application/json' \
+              -H 'Content-Type: application/json' \
+              -H 'Authorization: Bearer apikey' \
+              -X DELETE \
+              -b 'kubectyl_session'='eyJpdiI6InhIVXp5ZE43WlMxUU1NQ1pyNWRFa1E9PSIsInZhbHVlIjoiQTNpcE9JV3FlcmZ6Ym9vS0dBTmxXMGtST2xyTFJvVEM5NWVWbVFJSnV6S1dwcTVGWHBhZzdjMHpkN0RNdDVkQiIsIm1hYyI6IjAxYTI5NDY1OWMzNDJlZWU2OTc3ZDYxYzIyMzlhZTFiYWY1ZjgwMjAwZjY3MDU4ZDYwMzhjOTRmYjMzNDliN2YifQ%3D%3D'
+      responses:
+        '204':
+          description: Successful
+    post:
+      tags:
+        - /api/client/servers/{server}/schedules
+      summary: Update task
+      description: |
+        Updates the specified task
+        
+        # Actions
+        
+        | Action | Description |
+        | ------ | ----------- |
+        | command | Sends power action |
+        | power | Changes power signal - Check power route for payloads |
+        | backup | Creates a backup |
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schedule
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: task
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: action
+          description: Type of action to use
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: payload
+          description: Payload to send
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: time_offset
+          description: Offset in seconds
+          in: query
+          required: true
+          schema:
+            type: string
+      x-codeSamples:
+        - lang: 'cURL'
+          label: CLI
+          source: |
+            curl "https://kubectyl.file.properties/api/client/servers/1a7ce997/schedules/7/tasks/6" \
+              -H 'Accept: application/json' \
+              -H 'Content-Type: application/json' \
+              -H 'Authorization: Bearer apikey' \
+              -X POST \
+              -b 'kubectyl_session'='eyJpdiI6InhIVXp5ZE43WlMxUU1NQ1pyNWRFa1E9PSIsInZhbHVlIjoiQTNpcE9JV3FlcmZ6Ym9vS0dBTmxXMGtST2xyTFJvVEM5NWVWbVFJSnV6S1dwcTVGWHBhZzdjMHpkN0RNdDVkQiIsIm1hYyI6IjAxYTI5NDY1OWMzNDJlZWU2OTc3ZDYxYzIyMzlhZTFiYWY1ZjgwMjAwZjY3MDU4ZDYwMzhjOTRmYjMzNDliN2YifQ%3D%3D' \
+              -d '{
+              "action": "command",
+              "payload": "say Updated Statement!?",
+              "time_offset": "0"
+            }' 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  id:
+                    type: string
+                    example: 6
+  /api/client/servers/{server}/schedules/{schedule}/tasks:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}/schedules
+      summary: Create task
+      description: |
+        Creates a new task on the specified schedule
+      
+        # Actions
+        
+        | Action | Description |
+        | ------ | ----------- |
+        | command | Sends power action |
+        | power | Changes power signal - Check power route for payloads |
+        | backup | Creates a backup |
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schedule
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: action
+          description: Type of action to use
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: payload
+          description: Payload to send
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: time_offset
+          description: Offset in seconds
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/schedules/{schedule}:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    delete:
+      tags:
+        - /api/client/servers/{server}/schedules
+      summary: Delete schedule
+      description: Deletes the specified schedule
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schedule
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '204':
+          description: Invalid pet value
+    get:
+      tags:
+        - /api/client/servers/{server}/schedules
+      summary: List schedules
+      description: Lists all schedules added to the server
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schedule
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: successful operation
+    post:
+      tags:
+        - /api/client/servers/{server}/schedules
+      summary: Update schedule
+      description: Updates the specified schedule
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schedule
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: name
+          description: Friendly name for the schedule
+          in: query
+          required: true
+          schema:
+            type: string
+            minimum: 1
+        - name: is_active
+          description: Specifies whether the schedule is active
+          in: query
+          schema:
+            type: boolean
+        - name: minute
+          description: Cron minute syntax
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: hour
+          description: Cron hour syntax
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dayofweek
+          description: Cron day-of-month syntax
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dayofmonth
+          description: Cron day-of-month syntax
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/schedules:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/servers/{server}/schedules
+      summary: List schedules
+      description: Lists all schedules added to the server
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+    post:
+      tags:
+        - /api/client/servers/{server}/schedules
+      summary: Create schedule
+      description: Creates a new schedule
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          description: Friendly name for the schedule
+          in: query
+          required: true
+          schema:
+            type: string
+            minimum: 1
+        - name: is_active
+          description: Specifies whether the schedule is active
+          in: query
+          schema:
+            type: boolean
+        - name: minute
+          description: Cron minute syntax
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: hour
+          description: Cron hour syntax
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: day_of_week
+          description: Cron day-of-month syntax
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: day_of_month
+          description: Cron day-of-month syntax
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/files/upload:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Upload file
+      description: Returns a signed URL used to upload files to the server using POST
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: file
+          description: URL encoded path to the desired file
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/files/create-folder:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Create folder
+      description: Creates the specified folder in the specified directory
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: successful operation
+  /api/client/servers/{server}/files/delete:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Delete file
+      description: Deletes the specified file(s) or folder(s)
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: successful operation
+  /api/client/servers/{server}/files/decompress:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Decompress file
+      description: Decompresses the selected file
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: successful operation
+  /api/client/servers/{server}/files/compress:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Compress file
+      description: Compresses the specified file
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/files/write:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Write file
+      description: Writes data to the specified file
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: file
+          description: URL encoded path to the desired file
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: successful operation
+  /api/client/servers/{server}/files/copy:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Copy file
+      description: Copies the specified file
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: successful operation
+  /api/client/servers/{server}/files/rename:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    put:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Rename file
+      description: Renames the specified file(s) or folder(s)
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Invalid ID supplied
+  /api/client/servers/{server}/files/download:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Download file
+      description: Generates a one-time link to download the specified file
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: file
+          description: URL encoded path to the desired file
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/files/contents:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: Get file contents
+      description: Displays the contents of the specified file
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: file
+          description: URL encoded path to the desired file
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/files/list:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/servers/{server}/files
+      summary: List databases
+      description: Lists all databases on a server
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: directory
+          description: URL encoded path to list files from
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/databases/{database}:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    delete:
+      tags:
+        - /api/client/servers/{server}/databases
+      summary: Delete database
+      description: Deletes the specified database
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: database
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Invalid pet value
+  /api/client/servers/{server}/databases/{database}/rotate-password:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}/databases
+      summary: Rotate password
+      description: Changes the password of a specified database
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: database
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/databases:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/servers/{server}/databases
+      summary: List databases
+      description: Lists all databases on a server
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: password
+          description: Includes the database user password
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+    post:
+      tags:
+        - /api/client/servers/{server}/databases
+      summary: Create database
+      description: Creates a new database
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/power:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}
+      summary: Change power state
+      description: Sends a power signal to the server
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: command
+          description: Power signal to send
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - start
+              - stop
+              - restart
+              - kill
+      responses:
+        '204':
+          description: successful operation
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Updated name of the pet
+                  type: string
+                status:
+                  description: Updated status of the pet
+                  type: string
+  /api/client/servers/{server}/command:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    post:
+      tags:
+        - /api/client/servers/{server}
+      summary: Send command
+      description: |
+        Sends a command to the server
+
+        The server must be online to send a command to it. You will get HTTP 502 is the server if not online.
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: command
+          description: Command to send
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: successful operation
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Updated name of the pet
+                  type: string
+                status:
+                  description: Updated status of the pet
+                  type: string
+  /api/client/servers/{server}/resources:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/servers/{server}
+      summary: Resource usage
+      description: Retrieves resource utilization of the specified server
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}/websocket:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/servers/{server}
+      summary: Console details
+      description: |
+        Generates credentials to establish a websocket
+        
+        # How to connect
+        
+        1. Connect to the websocket address (in this example "wss://kubectyl.file.properties:8080/api/servers/1a7ce997-259b-452e-8b4e-cecc464142ca/ws")
+        2. Send the token to the websocket like this: _{"event":"auth","args":["eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6Ij..."]}_
+        * Tokens last about 10-15 minutes, and the websocket will notify you once you need to send a new token with _{"event":"token expiring"}** and _{"event":"token expired"}_
+        
+        # Things you can send
+        
+        * _{"event":"auth","args":["<token>"]}_ # Authenticate with websocket
+        * _{"event":"send stats","args":[null]}_ # Request stats
+        * _{"event":"send logs","args":[null]}_ # Request logs
+        * _{"event":"set state","args":["<power-action>"]}_ # Send power action
+        * _{"event":"send command","args":["<command>"]}_ # Send command
+        
+        # Things you'll receive
+        
+        * _{"event":"auth success"}_ # Upon successful websocket authentication
+        * _{"event":"status","args":["offline"]}_ # Status updates of the server
+        * _{"event":"console output","args":["[14:07:12] [Query Listener #1/INFO]: Query running on 0.0.0.0:25565"]}_ # Logs from server
+        * _{"event":"stats","args":["{\"memory_bytes\":526626816,\"memory_limit_bytes\":588800000,\"cpu_absolute\":588.815,\"network\":{\"rx_bytes\":1126,\"tx_bytes\":1126},\"state\":\"stopping\",\"disk_bytes\":128118626}"]}_ # Stats from server
+        * _{"event":"token expiring"}_ # Token is expiring soon so request a new one and send it to the websocket
+        * _{"event":"token expired"}_ # Token has expired
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+  /api/client/servers/{server}:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/servers/{server}
+      summary: Server details
+      description: Retrieves information about the specified server
+      parameters:
+        - name: server
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: rocket
+          description: Information about the egg the server uses
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: subusers
+          description: List of subusers on the server
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+  /api/client/account/api-keys/{identifier}:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    delete:
+      tags:
+        - /api/client/account
+      summary: Delete API key
+      description: Deletes the specified API key
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid pet value
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+  /api/client/account/api-keys:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/account
+      summary: List API keys
+      description: Retries a list of API keys
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+      security:
+        - bearerAuth: []
+    post:
+      tags:
+        - /api/client/account
+      summary: Create API key
+      description: Generates a new API key
+      parameters:
+        - name: description
+          in: query
+          description: Note for the API key
+          required: true
+          schema:
+            type: string
+        - name: allowed_ips
+          in: query
+          description: List of allowed IPs
+          schema:
+            type: object
+      responses:
+        '405':
+          description: Invalid input
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Updated name of the pet
+                  type: string
+                status:
+                  description: Updated status of the pet
+                  type: string
+  /api/client/account/password:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    put:
+      tags:
+        - /api/client/account
+      summary: Update password
+      description: Updates the password of the account
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '405':
+          description: Validation exception
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+      x-codeSamples:
+        - lang: PHP
+          source: |
+            $form = new \PetStore\Entities\Pet();
+            $form->setPetId(1);
+            $form->setPetType("Dog");
+            $form->setName("Rex");
+            // set other fields
+            try {
+                $pet = $client->pets()->update($form);
+            } catch (UnprocessableEntityException $e) {
+                var_dump($e->getErrors());
+            }
+  /api/client/account/email:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+    put:
+      tags:
+        - /api/client/account
+      summary: Update email
+      description: Updates the email address of the account
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '405':
+          description: Validation exception
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+      x-codeSamples:
+        - lang: PHP
+          source: |
+            $form = new \PetStore\Entities\Pet();
+            $form->setPetId(1);
+            $form->setPetType("Dog");
+            $form->setName("Rex");
+            // set other fields
+            try {
+                $pet = $client->pets()->update($form);
+            } catch (UnprocessableEntityException $e) {
+                var_dump($e->getErrors());
+            }
+  /api/client/account/two-factor:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/account
+      summary: 2FA details
+      description: Generates a TOTP QR code image to allow the setup of 2FA
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+      security:
+        - bearerAuth: []
+    post:
+      tags:
+        - /api/client/account
+      summary: Enable 2FA
+      description:  |
+        Enables TOTP 2FA using the QR code generated by the GET request
+        
+        Uses code generated from GET **/account/two-factor**
+      responses:
+        '405':
+          description: Invalid input
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+      x-codeSamples:
+        - lang: 'C#'
+          source: |
+            PetStore.v1.Pet pet = new PetStore.v1.Pet();
+            pet.setApiKey("your api key");
+            pet.petType = PetStore.v1.Pet.TYPE_DOG;
+            pet.name = "Rex";
+            // set other fields
+            PetStoreResponse response = pet.create();
+            if (response.statusCode == HttpStatusCode.Created)
+            {
+              // Successfully created
+            }
+            else
+            {
+              // Something wrong -- check response for errors
+              Console.WriteLine(response.getRawResponse());
+            }
+        - lang: PHP
+          source: |
+            $form = new \PetStore\Entities\Pet();
+            $form->setPetType("Dog");
+            $form->setName("Rex");
+            // set other fields
+            try {
+                $pet = $client->pets()->create($form);
+            } catch (UnprocessableEntityException $e) {
+                var_dump($e->getErrors());
+            }
+    delete:
+      tags:
+        - /api/client/account
+      summary: Disable 2FA
+      description: Disables TOTP 2FA on the account
+      operationId: deletePet
+      parameters:
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+      responses:
+        '400':
+          description: Invalid pet value
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+  /api/client/account:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client/account
+      summary: Account details
+      description: Retrieves information about the account
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+      security:
+        - bearerAuth: []
+  /api/client/permissions:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client
+      summary: Show permissions
+      description: |
+        Retries all available permissions
+        
+        This is used for the frontend
+      #operationId: getPetById
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            default: application/json
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+      security:
+        - bearerAuth: []
+  /api/client:
+    parameters:
+      - name: Accept
+        in: header
+        required: true
+        schema:
+          type: string
+          default: application/json
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer apikey
+    get:
+      tags:
+        - /api/client
+      summary: List servers
+      description: Lists all servers
+      #operationId: getPetById
+      parameters:
+        - name: rocket
+          in: query
+          description: Information about the rocket the server uses
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    petstore_auth:
+      description: |
+        Get access to data while protecting your account credentials.
+        OAuth2 is also a safer and more secure way to give you access.
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'http://petstore.swagger.io/api/oauth/dialog'
+          scopes:
+            'write:pets': modify pets in your account
+            'read:pets': read your pets
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  examples:
+    Order:
+      value:
+        quantity: 1
+        shipDate: '2018-10-19T16:46:45Z'
+        status: placed
+        complete: false
+x-webhooks:
+  newPet:
+    post:
+      summary: New pet
+      description: Information about a new pet in the systems
+      operationId: newPet
+      tags:
+        - pet
+      responses:
+        "200":
+          description: Return a 200 status to indicate that the data was received successfully
